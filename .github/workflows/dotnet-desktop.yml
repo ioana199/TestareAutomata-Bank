@@ -1,0 +1,38 @@
+name: .NET CI Build and Test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    # Rulează job-ul pe mașini virtuale Windows 
+    runs-on: windows-latest 
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    # 1. Instalează SDK-ul .NET necesar
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' # Sau versiunea pe care o folosești (ex: '6.0.x', '7.0.x')
+
+    # 2. Restaurarea dependențelor NuGet (bibliotecile NUnit, Moq etc.)
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # 3. Compilarea proiectului (Build)
+    # Folosește calea relativă la fișierul soluției .sln dacă există, altfel se compilează automat proiectele.
+    - name: Build
+      run: dotnet build --no-restore
+
+    # 4. Rularea testelor unitare
+    # Parametrul /p:CollectCoverage=true este adăugat opțional dacă dorești să colectezi date de acoperire, dar nu este esențial pentru funcționarea testelor.
+    # --no-build asigură că nu mai compilăm o dată.
+    - name: Run tests (NUnit and Moq)
+      run: dotnet test --no-build --verbosity normal
