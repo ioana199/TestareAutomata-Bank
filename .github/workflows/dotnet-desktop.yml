@@ -22,17 +22,6 @@ jobs:
       with:
         dotnet-version: '8.0.x' # Sau versiunea pe care o folosești (ex: '6.0.x', '7.0.x')
 
-    # 2. Restaurarea dependențelor NuGet (bibliotecile NUnit, Moq etc.)
-    - name: Restore dependencies
-      run: dotnet restore
-
-    # 3. Compilarea proiectului (Build)
-    # Folosește calea relativă la fișierul soluției .sln dacă există, altfel se compilează automat proiectele.
-    - name: Build
-      run: dotnet build --no-restore
-
-    # 4. Rularea testelor unitare
-    # Parametrul /p:CollectCoverage=true este adăugat opțional dacă dorești să colectezi date de acoperire, dar nu este esențial pentru funcționarea testelor.
-    # --no-build asigură că nu mai compilăm o dată.
+  # 2. Rulează testele (această comandă va restaura și compila automat)
     - name: Run tests (NUnit and Moq)
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test BankTests/BankTests.csproj --verbosity normal
